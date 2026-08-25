@@ -1,0 +1,21 @@
+COMO CREAR EL APK DESDE TU CELULAR
+
+1. Crea una cuenta o inicia sesión en GitHub.
+2. En Chrome abre github.com y crea un repositorio NUEVO, por ejemplo:
+   GeneradorAudioMP3
+3. Descarga y descomprime este proyecto en tu teléfono.
+4. Sube todos los archivos y carpetas del proyecto al repositorio.
+5. En GitHub entra a Actions.
+6. Selecciona "Build Android APK".
+7. Pulsa "Run workflow".
+8. Espera a que termine el proceso.
+9. En la ejecución terminada, busca "Artifacts".
+10. Descarga "GeneradorAudioMP3-debug".
+11. Dentro del ZIP estará app-debug.apk.
+12. Instálalo en tu Android.
+
+NOTA:
+- El proyecto usa el motor Text-to-Speech del propio Android.
+- La disponibilidad de voces depende de las voces instaladas en el teléfono.
+- Para una voz masculina comercial concreta, instala/selecciona una voz española masculina
+  en Ajustes > Texto a voz del teléfono.
