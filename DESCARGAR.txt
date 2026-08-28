@@ -1,0 +1,88 @@
+DESCARGA AUTOMÁTICA - GENERADOR DE AUDIO MP3
+=============================================
+
+La aplicación está lista para compilar y descargar.
+
+📱 OPCIÓN 1: Compilación Automática (RECOMENDADO)
+========================================
+
+Windows (CMD):
+  1. Abre "Símbolo del Sistema" (cmd.exe)
+  2. Ejecuta: build.bat
+  3. Espera a que termine
+  4. Los archivos estarán listos en:
+     ✓ Windows\bin\Release\net8.0-windows\win-x64\publish\GeneradorAudioMP3.exe
+     ✓ Android\app\build\outputs\bundle\release\app-release.aab
+
+Linux/Mac (Terminal):
+  1. chmod +x build.sh
+  2. ./build.sh
+
+💻 OPCIÓN 2: Compilación Manual
+==============================
+
+Windows 64-bit (.EXE):
+  cd Windows
+  dotnet restore GeneradorAudioMP3.Windows.csproj
+  dotnet publish -c Release -r win-x64 --self-contained
+  
+  ✓ Archivo: Windows\bin\Release\net8.0-windows\win-x64\publish\GeneradorAudioMP3.exe
+
+Android (APK/AAB):
+  cd Android
+  ./gradlew bundleRelease
+  
+  ✓ Archivo: Android\app\build\outputs\bundle\release\app-release.aab
+  ✓ O APK: Android\app\build\outputs\apk\release\app-release.apk
+
+📦 OPCIÓN 3: Descargar Precompilados
+====================================
+
+Si no quieres compilar, descarga desde GitHub Releases:
+  https://github.com/santiagoazul2-design/GeneradorAudioMP3/releases
+
+Busca la última versión y descarga:
+  ✓ GeneradorAudioMP3-Windows-x64.exe
+  ✓ GeneradorAudioMP3-Windows-x64.msi
+  ✓ GeneradorAudioMP3-Android.apk
+  ✓ GeneradorAudioMP3-Android.aab
+
+✅ REQUISITOS MÍNIMOS
+====================
+
+Windows:
+  • Windows 10/11 64-bit
+  • .NET 8.0 SDK (https://dotnet.microsoft.com/download)
+
+Android:
+  • Android 7.0+
+  • JDK 17+ (https://www.oracle.com/java/technologies/downloads/)
+  • Android SDK (incluido en Android Studio)
+
+🚀 INSTALACIÓN
+==============
+
+Windows:
+  1. Descarga GeneradorAudioMP3.exe
+  2. Ejecuta haciendo doble click
+  3. ¡Listo! Busca en Menú Inicio
+
+Android:
+  1. Descarga app-release.apk
+  2. Transfiere a tu teléfono
+  3. Permite "Fuentes desconocidas" en Configuración
+  4. Toca el APK e instala
+  5. ¡Listo!
+
+📞 AYUDA
+========
+
+¿Problemas con la compilación?
+  • Lee: DESCARGAR_E_INSTALAR.md
+  • O: COMPILACION.md
+
+¿No puedes compilar?
+  • Descarga versión precompilada desde GitHub Releases
+  • Contacta: seguridad@generadoraudio.dev
+
+¡Disfruta! 🎵
