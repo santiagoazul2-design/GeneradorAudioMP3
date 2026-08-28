@@ -1,0 +1,126 @@
+# Git Ignore for GeneradorAudioMP3 Project
+
+## Build directories
+build/
+dist/
+bin/
+obj/
+out/
+
+## IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+## Android Studio
+*.apk
+*.aab
+*.dex
+*.class
+*.jar
+*.aar
+*.so
+*.properties
+.gradle/
+gradle-app.setting
+gradlew
+gradlew.bat
+!gradle-wrapper.jar
+
+## Visual Studio
+.vs/
+*.user
+*.suo
+*.sln.docstates
+*.vcxproj.filters
+
+## .NET
+*.dll
+*.pdb
+*.nupkg
+packages/
+.nuget/
+
+## Testing
+test-reports/
+coverage/
+*.trx
+
+## Secrets & Keys
+keystore/
+*.keystore
+*.jks
+*.p12
+*.pfx
+secrets.json
+.env
+.env.local
+*.pem
+private_key*
+
+## Logs
+*.log
+logs/
+
+## Temporary files
+*.tmp
+temp/
+*.bak
+*.swp
+
+## Artifacts
+artifacts/
+release/
+publish/
+
+## OS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+
+## IDE Runtime
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+## MacOS
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+## Audio files (no commit de archivos generados)
+*.mp3
+*.wav
+*.aac
+*.m4a
+
+## Documentation builds
+docs/_build/
+site/
+
+## Node (si hay frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+## Python (si hay scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+env/
+venv/
+
+## Keep important files
+!.gitkeep
+!.gitattributes

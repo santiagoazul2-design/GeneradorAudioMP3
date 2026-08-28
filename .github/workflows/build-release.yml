@@ -1,0 +1,129 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Android Build
+  build-android:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+    
+    - name: Build APK Debug
+      run: |
+        cd Android
+        chmod +x gradlew
+        ./gradlew assembleDebug
+    
+    - name: Build AAB Release
+      if: startsWith(github.ref, 'refs/tags/')
+      env:
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      run: |
+        cd Android
+        ./gradlew bundleRelease
+    
+    - name: Upload APK to Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-debug-apk
+        path: Android/app/build/outputs/apk/debug/app-debug.apk
+    
+    - name: Upload Release AAB
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-release-aab
+        path: Android/app/build/outputs/bundle/release/app-release.aab
+
+  # Windows Build
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: |
+        cd Windows
+        dotnet restore GeneradorAudioMP3.Windows.csproj
+    
+    - name: Build Release (x64)
+      run: |
+        cd Windows
+        dotnet publish -c Release -r win-x64 --self-contained -p:PublishTrimmed=true
+    
+    - name: Upload Windows Build
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-x64-app
+        path: Windows/bin/Release/net8.0-windows/win-x64/publish/
+
+  # Create Release
+  create-release:
+    needs: [build-android, build-windows]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          android-release-aab/app-release.aab
+          windows-x64-app/*
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Upload to Google Play
+  publish-google-play:
+    needs: build-android
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Download AAB
+      uses: actions/download-artifact@v3
+      with:
+        name: android-release-aab
+    
+    - name: Publish to Google Play
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        packageName: com.example.generadoraudio
+        releaseFiles: 'app-release.aab'
+        track: internal
+        inAppUpdatePriority: 2

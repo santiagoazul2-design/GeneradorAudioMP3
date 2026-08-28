@@ -1,0 +1,17 @@
+// Configuración de versionado para Windows (C#)
+// Agregar al archivo: GeneradorAudioMP3.Windows.csproj
+
+<!-- En la sección PropertyGroup -->
+<PropertyGroup>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Company>Santiago Azul</Company>
+    <Product>Generador de Audio MP3</Product>
+    <Description>Convierte texto en audio MP3 con síntesis de voz natural</Description>
+    <Copyright>© 2024 Santiago Azul. Todos los derechos reservados.</Copyright>
+    <Authors>Santiago Azul</Authors>
+    <RepositoryUrl>https://github.com/santiagoazul2-design/GeneradorAudioMP3</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/santiagoazul2-design/GeneradorAudioMP3</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+</PropertyGroup>
