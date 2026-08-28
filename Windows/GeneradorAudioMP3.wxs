@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+    <?define ProductVersion="1.0.0.0"?>
+    <?define ProductName="Generador de Audio MP3"?>
+    <?define ProductCodeGUID="550e8400-e29b-41d4-a716-446655440000"?>
+    <?define UpgradeCodeGUID="550e8400-e29b-41d4-a716-446655440001"?>
+
+    <Product Id="$(var.ProductCodeGUID)"
+             Name="$(var.ProductName)"
+             Language="3082"
+             Version="$(var.ProductVersion)"
+             Manufacturer="Santiago Azul"
+             UpgradeCode="$(var.UpgradeCodeGUID)">
+
+        <Package InstallerVersion="200"
+                 Compressed="yes"
+                 InstallScope="perMachine"
+                 Platform="x64"
+                 Description="Convierte texto a audio MP3 con síntesis de voz natural"/>
+
+        <MediaTemplate EmbedCab="yes"/>
+
+        <!-- Permitir upgrades -->
+        <MajorUpgrade DownloadURL="http://example.com/GeneradorAudioMP3.msi"
+                     AllowDowngrades="no"
+                     AllowSameVersionUpgrades="no"
+                     RemoveFeatures="all"
+                     InstallLevel="1"/>
+
+        <!-- Feature principal -->
+        <Feature Id="ProductFeature" Title="$(var.ProductName)" Level="1">
+            <ComponentRef Id="MainExecutable"/>
+            <ComponentRef Id="DesktopShortcut"/>
+            <ComponentRef Id="StartMenuShortcut"/>
+        </Feature>
+
+        <!-- Interfaz de usuario -->
+        <UIRef Id="WixUI_InstallDir"/>
+        <UIRef Id="WixUI_ErrorProgressText"/>
+
+        <!-- Propiedades de instalación -->
+        <Property Id="INSTALLFOLDER" Value="C:\Program Files\GeneradorAudioMP3\"/>
+        <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER"/>
+
+        <!-- Directorio de instalación -->
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFiles64Folder">
+                <Directory Id="INSTALLFOLDER" Name="GeneradorAudioMP3"/>
+            </Directory>
+            <Directory Id="ProgramMenuFolder">
+                <Directory Id="ApplicationProgramsFolder" Name="Generador Audio MP3"/>
+            </Directory>
+            <Directory Id="DesktopFolder" Name="Desktop"/>
+        </Directory>
+
+        <!-- Componentes de instalación -->
+        <DirectoryRef Id="INSTALLFOLDER">
+            <Component Id="MainExecutable" Guid="550e8400-e29b-41d4-a716-446655440002">
+                <File Id="GeneradorAudioExe"
+                      Name="GeneradorAudioMP3.exe"
+                      Source="$(var.PublishDir)GeneradorAudioMP3.exe"
+                      KeyPath="yes"/>
+                <File Id="NAudioDll"
+                      Name="NAudio.dll"
+                      Source="$(var.PublishDir)NAudio.dll"/>
+                <RegistryValue Root="HKCU"
+                              Key="Software\GeneradorAudioMP3"
+                              Name="installed"
+                              Type="string"
+                              Value="1"/>
+            </Component>
+        </DirectoryRef>
+
+        <!-- Acceso directo en Escritorio -->
+        <DirectoryRef Id="DesktopFolder">
+            <Component Id="DesktopShortcut" Guid="550e8400-e29b-41d4-a716-446655440003">
+                <Shortcut Id="DesktopShortcut"
+                         Target="[INSTALLFOLDER]GeneradorAudioMP3.exe"
+                         Name="Generador de Audio MP3"
+                         WorkingDirectory="INSTALLFOLDER"
+                         Icon="ApplicationIcon.ico"/>
+                <RemoveFolder Id="DesktopFolder" On="uninstall"/>
+                <RegistryValue Root="HKCU"
+                              Key="Software\GeneradorAudioMP3"
+                              Name="DesktopShortcut"
+                              Type="integer"
+                              Value="1"/>
+            </Component>
+        </DirectoryRef>
+
+        <!-- Acceso directo en Menú Inicio -->
+        <DirectoryRef Id="ApplicationProgramsFolder">
+            <Component Id="StartMenuShortcut" Guid="550e8400-e29b-41d4-a716-446655440004">
+                <Shortcut Id="StartMenuShortcut"
+                         Target="[INSTALLFOLDER]GeneradorAudioMP3.exe"
+                         Name="Generador de Audio MP3"
+                         WorkingDirectory="INSTALLFOLDER"
+                         Icon="ApplicationIcon.ico"/>
+                <Shortcut Id="UninstallProduct"
+                         Target="[SystemFolder]msiexec.exe"
+                         Arguments="/x [ProductCode]"
+                         Name="Desinstalar Generador Audio MP3"/>
+                <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+                <RegistryValue Root="HKCU"
+                              Key="Software\GeneradorAudioMP3"
+                              Name="StartMenuShortcut"
+                              Type="integer"
+                              Value="1"/>
+            </Component>
+        </DirectoryRef>
+
+        <!-- Icono de la aplicación -->
+        <Icon Id="ApplicationIcon.ico" SourceFile="Icon.ico"/>
+
+    </Product>
+
+</Wix>

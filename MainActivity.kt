@@ -9,18 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 import java.util.*
 
-class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
-    private lateinit var tts: TextToSpeech
+class MainActivity : AppCompatActivity() {
     private lateinit var text: EditText
     private lateinit var voice: Spinner
     private lateinit var speed: Spinner
     private lateinit var generate: Button
     private lateinit var status: TextView
+    private lateinit var viewModel: AudioGeneratorViewModel
 
-    private val voiceNames = arrayOf(
-        "Masculina",
-        "Femenina"
-    )
+    private val voiceNames = arrayOf("Masculina", "Femenina")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,66 +33,37 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         speed.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
             arrayOf("Lenta", "Normal", "Comercial", "Rápida"))
 
-        tts = TextToSpeech(this, this)
-
-        generate.setOnClickListener { createMp3() }
-
-        text.setText("Somos el nuevo canal de análisis político y geopolítico del Ecuador.")
-    }
-
-    override fun onInit(result: Int) {
-        if (result == TextToSpeech.SUCCESS) {
-            val spanish = Locale("es", "EC")
-            val available = tts.isLanguageAvailable(spanish)
-            tts.language = if (available >= TextToSpeech.LANG_AVAILABLE) spanish else Locale("es", "ES")
-            status.text = "Listo para generar."
-        } else {
-            status.text = "No se pudo iniciar la voz del teléfono."
-        }
-    }
-
-    private fun createMp3() {
-        val content = text.text.toString().trim()
-        if (content.isEmpty()) {
-            Toast.makeText(this, "Escribe un texto.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val speedValue = when (speed.selectedItemPosition) {
-            0 -> 0.85f
-            1 -> 1.0f
-            2 -> 1.08f
-            else -> 1.18f
-        }
-
-        tts.setSpeechRate(speedValue)
-        tts.setPitch(if (voice.selectedItemPosition == 0) 0.85f else 1.0f)
-
-        val file = File(getExternalFilesDir(null), "audio_comercial.mp3")
-        file.delete()
-
-        val params = Bundle()
-        params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "audio")
-
-        tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-            override fun onStart(id: String?) {
-                runOnUiThread { status.text = "Generando audio..." }
+        viewModel = AudioGeneratorViewModel(this)
+        viewModel.initialize(object : AudioGeneratorViewModel.AudioListener {
+            override fun onStatusChanged(status: String) {
+                runOnUiThread { this@MainActivity.status.text = status }
             }
-            override fun onDone(id: String?) {
+
+            override fun onAudioGenerated(file: File) {
                 runOnUiThread {
-                    status.text = "MP3 generado correctamente."
+                    Toast.makeText(this@MainActivity, "Audio guardado: ${file.name}", Toast.LENGTH_SHORT).show()
                     shareFile(file)
                 }
             }
-            override fun onError(id: String?) {
-                runOnUiThread { status.text = "Error al generar el audio." }
+
+            override fun onError(error: String) {
+                runOnUiThread {
+                    this@MainActivity.status.text = error
+                    Toast.makeText(this@MainActivity, error, Toast.LENGTH_SHORT).show()
+                }
             }
         })
 
-        val result = tts.synthesizeToFile(content, params, file, "audio")
-        if (result != TextToSpeech.SUCCESS) {
-            status.text = "No se pudo generar el MP3."
+        generate.setOnClickListener {
+            val content = text.text.toString().trim()
+            val selectedVoice = voiceNames[voice.selectedItemPosition]
+            val speedOptions = arrayOf("Lenta", "Normal", "Comercial", "Rápida")
+            val selectedSpeed = speedOptions[speed.selectedItemPosition]
+
+            viewModel.generateAudio(content, voice = selectedVoice, speed = selectedSpeed)
         }
+
+        text.setText("Somos el nuevo canal de análisis político y geopolítico del Ecuador.")
     }
 
     private fun shareFile(file: File) {
@@ -110,8 +78,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     override fun onDestroy() {
-        tts.stop()
-        tts.shutdown()
+        viewModel.shutdown()
         super.onDestroy()
     }
 }
